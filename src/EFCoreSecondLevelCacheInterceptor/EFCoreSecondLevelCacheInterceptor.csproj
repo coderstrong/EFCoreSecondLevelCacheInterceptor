@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Entity Framework Core Second Level Caching Library.</Description>
-    <VersionPrefix>2.4.1</VersionPrefix>
+    <VersionPrefix>2.9.0</VersionPrefix>
     <Authors>Vahid Nasiri</Authors>
     <TargetFrameworks>net5.0;netstandard2.1;netstandard2.0;net461;netcoreapp3.1;</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard2.0</TargetFrameworks>
@@ -23,6 +23,7 @@
     <DebugType>embedded</DebugType>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <PropertyGroup>
     <LangVersion>9</LangVersion>
@@ -40,11 +41,11 @@
     <ReportAnalyzer>true</ReportAnalyzer>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Meziantou.Analyzer" Version="1.0.646">
+    <PackageReference Include="Meziantou.Analyzer" Version="1.0.656">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.8.55">
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="16.9.60">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -56,21 +57,22 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.18.0.27296">
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.20.0.28934">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[3.1,4)" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[3.1,4)" />
-    <PackageReference Include="CacheManager.Core" Version="[1.2,2)" />
-    <PackageReference Include="EasyCaching.Core" Version="[1.1,2)" />
+    <PackageReference Include="CacheManager.Core" Version="[1.2,)" />
+    <PackageReference Include="EasyCaching.Core" Version="[1.1,)" />
   </ItemGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'net461'">
     <DefineConstants>NET4_6_1</DefineConstants>
@@ -79,30 +81,40 @@
   <ItemGroup Condition=" ('$(TargetFramework)' == 'netstandard2.0')">
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[3.1,4)" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[3.1,4)" />
-    <PackageReference Include="CacheManager.Core" Version="[1.2,2)" />
-    <PackageReference Include="EasyCaching.Core" Version="[1.1,2)" />
+    <PackageReference Include="CacheManager.Core" Version="[1.2,)" />
+    <PackageReference Include="EasyCaching.Core" Version="[1.1,)" />
   </ItemGroup>
   <PropertyGroup Condition="('$(TargetFramework)' == 'netstandard2.0')">
     <DefineConstants>NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup Condition="('$(TargetFramework)' == 'netcoreapp3.1')">
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[3.1,)" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[3.1,)" />
-    <PackageReference Include="CacheManager.Core" Version="[1.2,2)" />
-    <PackageReference Include="EasyCaching.Core" Version="[1.1,2)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[3.1,6)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[3.1,6)" />
+    <PackageReference Include="CacheManager.Core" Version="[1.2,)" />
+    <PackageReference Include="EasyCaching.Core" Version="[1.1,)" />
   </ItemGroup>
   <PropertyGroup Condition="('$(TargetFramework)' == 'netcoreapp3.1')">
     <DefineConstants>NETCORE3_1</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup Condition="('$(TargetFramework)' == 'net5.0') or  ('$(TargetFramework)' == 'netstandard2.1')">
+  <ItemGroup Condition="('$(TargetFramework)' == 'netstandard2.1')">
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[5,)" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[5,)" />
-    <PackageReference Include="CacheManager.Core" Version="[1.2,2)" />
-    <PackageReference Include="EasyCaching.Core" Version="[1.1,2)" />
+    <PackageReference Include="CacheManager.Core" Version="[1.2,)" />
+    <PackageReference Include="EasyCaching.Core" Version="[1.1,)" />
   </ItemGroup>
-  <PropertyGroup Condition="('$(TargetFramework)' == 'net5.0') or  ('$(TargetFramework)' == 'netstandard2.1')">
+  <PropertyGroup Condition="('$(TargetFramework)' == 'netstandard2.1')">
+    <DefineConstants>NETSTANDARD2_1</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition="('$(TargetFramework)' == 'net5.0')">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[5,)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[5,)" />
+    <PackageReference Include="CacheManager.Core" Version="[1.2,)" />
+    <PackageReference Include="EasyCaching.Core" Version="[1.1,)" />
+  </ItemGroup>
+  <PropertyGroup Condition="('$(TargetFramework)' == 'net5.0')">
     <DefineConstants>NET5_0</DefineConstants>
   </PropertyGroup>
 

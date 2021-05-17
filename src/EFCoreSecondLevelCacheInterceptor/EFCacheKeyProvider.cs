@@ -3,6 +3,7 @@ using System.Data.Common;
 using System.Globalization;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace EFCoreSecondLevelCacheInterceptor
 {
@@ -14,6 +15,8 @@ namespace EFCoreSecondLevelCacheInterceptor
         private readonly IEFCacheDependenciesProcessor _cacheDependenciesProcessor;
         private readonly IEFDebugLogger _logger;
         private readonly IEFCachePolicyParser _cachePolicyParser;
+        private readonly EFCoreSecondLevelCacheSettings _cacheSettings;
+        private readonly IEFHashProvider _hashProvider;
 
         /// <summary>
         /// A custom cache key provider for EF queries.
@@ -21,11 +24,21 @@ namespace EFCoreSecondLevelCacheInterceptor
         public EFCacheKeyProvider(
             IEFCacheDependenciesProcessor cacheDependenciesProcessor,
             IEFCachePolicyParser cachePolicyParser,
-            IEFDebugLogger logger)
+            IEFDebugLogger logger,
+            IOptions<EFCoreSecondLevelCacheSettings> cacheSettings,
+            IEFHashProvider hashProvider)
         {
             _cacheDependenciesProcessor = cacheDependenciesProcessor;
             _logger = logger;
             _cachePolicyParser = cachePolicyParser;
+
+            if (cacheSettings == null)
+            {
+                throw new ArgumentNullException(nameof(cacheSettings));
+            }
+
+            _cacheSettings = cacheSettings.Value;
+            _hashProvider = hashProvider ?? throw new ArgumentNullException(nameof(hashProvider));
         }
 
         /// <summary>
@@ -48,12 +61,14 @@ namespace EFCoreSecondLevelCacheInterceptor
             }
 
             var cacheKey = getCacheKey(command, cachePolicy.CacheSaltKey);
-            var cacheKeyHash = $"{XxHashUnsafe.ComputeHash(cacheKey):X}";
+            var cacheKeyHash =
+                !string.IsNullOrEmpty(_cacheSettings.CacheKeyPrefix) ?
+                        $"{_cacheSettings.CacheKeyPrefix}{_hashProvider.ComputeHash(cacheKey):X}" :
+                        $"{_hashProvider.ComputeHash(cacheKey):X}";
             var cacheDependencies = _cacheDependenciesProcessor.GetCacheDependencies(command, context, cachePolicy);
             _logger.LogDebug($"KeyHash: {cacheKeyHash}, CacheDependencies: {string.Join(", ", cacheDependencies)}.");
             return new EFCacheKey(cacheDependencies)
             {
-                Key = cacheKey,
                 KeyHash = cacheKeyHash
             };
         }
@@ -94,7 +109,22 @@ namespace EFCoreSecondLevelCacheInterceptor
                 return bytesToHex(buffer);
             }
 
+            if (parameter.Value is Array array)
+            {
+                return arrayToString(array);
+            }
+
             return parameter.Value?.ToString();
+        }
+
+        private static string arrayToString(Array array)
+        {
+            var sb = new StringBuilder();
+            foreach (var item in array)
+            {
+                sb.Append(item).Append(' ');
+            }
+            return sb.ToString();
         }
 
         private static string bytesToHex(byte[] buffer)

@@ -197,6 +197,18 @@ namespace EFCoreSecondLevelCacheInterceptor
         }
 
         /// <summary>
+        /// Uses the cache key prefix.
+        /// Sets the prefix to all of the cachedKey's.
+        /// </summary>
+        /// <param name="prefix">The prefix.</param>
+        /// <returns>EFCoreSecondLevelCacheOptions.</returns>
+        public EFCoreSecondLevelCacheOptions UseCacheKeyPrefix(string prefix)
+        {
+            Settings.CacheKeyPrefix = prefix;
+            return this;
+        }
+
+        /// <summary>
         /// Should the debug level loggig be disabled?
         /// Set it to true for maximum performance.
         /// </summary>
@@ -233,6 +245,51 @@ namespace EFCoreSecondLevelCacheInterceptor
         public EFCoreSecondLevelCacheOptions SkipCacheInvalidationCommands(Predicate<string> predicate)
         {
             Settings.SkipCacheInvalidationCommands = predicate ?? throw new ArgumentNullException(nameof(predicate));
+            return this;
+        }
+
+        /// <summary>
+        /// Puts the whole system in cache except for the specified `realTableNames`.
+        /// In this case calling the `Cacheable()` methods won't be necessary.
+        /// If you specify the `Cacheable()` method, its setting will override this global setting.
+        /// </summary>
+        /// <param name="expirationMode">Defines the expiration mode of the cache items globally.</param>
+        /// <param name="timeout">The expiration timeout.</param>
+        /// <param name="realTableNames">
+        /// The real table names.
+        /// Queries containing these names will not be cached.
+        /// Table names are not case sensitive.
+        /// </param>
+        public EFCoreSecondLevelCacheOptions CacheAllQueriesExceptContainingTableNames(
+                CacheExpirationMode expirationMode, TimeSpan timeout, params string[] realTableNames)
+        {
+            Settings.SkipCacheSpecificQueriesOptions = new SkipCacheSpecificQueriesOptions(entityTypes: null)
+            {
+                ExpirationMode = expirationMode,
+                Timeout = timeout,
+                IsActive = true,
+                TableNames = realTableNames
+            };
+            return this;
+        }
+
+        /// <summary>
+        /// Puts the whole system in cache except for the specified `entityTypes`.
+        /// In this case calling the `Cacheable()` methods won't be necessary.
+        /// If you specify the `Cacheable()` method, its setting will override this global setting.
+        /// </summary>
+        /// <param name="expirationMode">Defines the expiration mode of the cache items globally.</param>
+        /// <param name="timeout">The expiration timeout.</param>
+        /// <param name="entityTypes">The real entity types. Queries containing these types will not be cached.</param>
+        public EFCoreSecondLevelCacheOptions CacheAllQueriesExceptContainingTypes(
+                CacheExpirationMode expirationMode, TimeSpan timeout, params Type[] entityTypes)
+        {
+            Settings.SkipCacheSpecificQueriesOptions = new SkipCacheSpecificQueriesOptions(entityTypes)
+            {
+                ExpirationMode = expirationMode,
+                Timeout = timeout,
+                IsActive = true
+            };
             return this;
         }
     }

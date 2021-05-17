@@ -23,6 +23,12 @@ namespace EFCoreSecondLevelCacheInterceptor
         public bool IsHybridCache { get; set; }
 
         /// <summary>
+        /// Gets or sets the cache key prefix.
+        /// </summary>
+        /// <value>The cache key prefix.</value>
+        public string CacheKeyPrefix { get; set; } = default!;
+
+        /// <summary>
         /// CacheAllQueries Options
         /// </summary>
         public CacheAllQueriesOptions CacheAllQueriesOptions { get; set; } = new CacheAllQueriesOptions();
@@ -31,6 +37,11 @@ namespace EFCoreSecondLevelCacheInterceptor
         /// Cache Specific Queries Options
         /// </summary>
         public CacheSpecificQueriesOptions CacheSpecificQueriesOptions { get; set; } = new CacheSpecificQueriesOptions(entityTypes: null);
+
+        /// <summary>
+        /// Skip Cache Specific Queries Options
+        /// </summary>
+        public SkipCacheSpecificQueriesOptions SkipCacheSpecificQueriesOptions { get; set; } = new SkipCacheSpecificQueriesOptions(entityTypes: null);
 
         /// <summary>
         /// Should the debug level loggig be disabled?
